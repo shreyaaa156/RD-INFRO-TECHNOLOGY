@@ -1,35 +1,57 @@
 import requests
 import pandas as pd
 
+# OpenWeather API Key
 API_KEY = "f40047a95045c1a84282eca533f63db0"
 
+# Cities to fetch weather data
 cities = ["Bangalore", "Delhi", "Mumbai", "Chennai"]
 
-all_data = []
+# List to store collected data
+weather_records = []
+
+print("\nFetching weather data...\n")
 
 for city in cities:
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-    
+
+    # API endpoint
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather?"
+        f"q={city}&appid={API_KEY}&units=metric"
+    )
+
+    # API request
     response = requests.get(url)
+
+    # Convert response into JSON
     data = response.json()
 
+    # Validate response
     if "main" in data:
-        weather_data = {
+
+        weather_info = {
             "City": city,
-            "Temperature": data["main"]["temp"],
-            "Humidity": data["main"]["humidity"],
-            "Weather": data["weather"][0]["description"],
+            "Temperature (°C)": data["main"]["temp"],
+            "Humidity (%)": data["main"]["humidity"],
+            "Weather Condition": data["weather"][0]["description"],
             "Wind Speed": data["wind"]["speed"]
         }
-        all_data.append(weather_data)
+
+        weather_records.append(weather_info)
+
+        print(f"Successfully fetched data for {city}")
+
     else:
-        print(f"Error fetching data for {city}: {data['message']}")
+        print(f"Failed to fetch data for {city}")
 
-df = pd.DataFrame(all_data)
+# Create DataFrame
+df = pd.DataFrame(weather_records)
 
-print("\nFinal Data:")
+# Display final dataset
+print("\nFinal Weather Dataset:\n")
 print(df)
 
-df.to_csv("weather_output.csv", index=False)
+# Export to CSV
+df.to_excel("weather_output.xlsx", index=False)
 
-print("\nData saved successfully!")
+print("\nDataset exported successfully!")
