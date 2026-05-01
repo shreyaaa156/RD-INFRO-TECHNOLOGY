@@ -8,7 +8,7 @@ Real-Time Weather Data Collection Project using Python and OpenWeather API
 
 # Project Overview
 
-This project collects real-time weather data from multiple cities using the OpenWeather API. The collected data is processed using Python and Pandas, converted into a structured dataset, and exported into a CSV/Excel file for analysis.
+This project collects real-time weather data from multiple Indian cities using the OpenWeather API. The collected data is processed using Python and Pandas, converted into a structured dataset, and exported into an Excel file for further analysis.
 
 This project was completed as part of the Data Analysis Internship at RD INFRO TECHNOLOGY.
 
@@ -20,7 +20,8 @@ This project was completed as part of the Data Analysis Internship at RD INFRO T
 - Pandas
 - Requests Library
 - OpenWeather API
-- CSV / Excel File Handling
+- OpenPyXL
+- Visual Studio Code
 
 ---
 
@@ -38,7 +39,7 @@ This project was completed as part of the Data Analysis Internship at RD INFRO T
 
 ✅ Converts raw JSON data into structured tabular format
 
-✅ Exports data into CSV/Excel file
+✅ Exports data into Excel format
 
 ---
 
@@ -48,59 +49,75 @@ This project was completed as part of the Data Analysis Internship at RD INFRO T
 RD-INFRO-TECHNOLOGY/
 │
 ├── weather_data_collection.py
-├── weather_output.csv
-├── README.md
+├── weather_output.xlsx
+└── README.md
 
-
-#Python Code:
+Python Code:
 
 import requests
 import pandas as pd
 
+# OpenWeather API Key
 API_KEY = "YOUR_API_KEY"
 
+# Cities to fetch weather data
 cities = ["Bangalore", "Delhi", "Mumbai", "Chennai"]
 
-all_data = []
+# List to store collected data
+weather_records = []
+
+print("\nFetching weather data...\n")
 
 for city in cities:
 
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+    # API endpoint
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather?"
+        f"q={city}&appid={API_KEY}&units=metric"
+    )
 
+    # API request
     response = requests.get(url)
 
+    # Convert response into JSON
     data = response.json()
 
+    # Validate response
     if "main" in data:
 
-        weather_data = {
+        weather_info = {
             "City": city,
-            "Temperature": data["main"]["temp"],
-            "Humidity": data["main"]["humidity"],
-            "Weather": data["weather"][0]["description"],
+            "Temperature (°C)": data["main"]["temp"],
+            "Humidity (%)": data["main"]["humidity"],
+            "Weather Condition": data["weather"][0]["description"],
             "Wind Speed": data["wind"]["speed"]
         }
 
-        all_data.append(weather_data)
+        weather_records.append(weather_info)
+
+        print(f"Successfully fetched data for {city}")
 
     else:
-        print(f"Error fetching data for {city}: {data['message']}")
+        print(f"Failed to fetch data for {city}")
 
-df = pd.DataFrame(all_data)
+# Create DataFrame
+df = pd.DataFrame(weather_records)
 
+# Display final dataset
+print("\nFinal Weather Dataset:\n")
 print(df)
 
-df.to_csv("weather_output.csv", index=False)
+# Export to Excel
+df.to_excel("weather_output.xlsx", index=False)
 
-print("Weather data saved successfully!")
+print("\nDataset exported successfully!")
 
-#Sample Output
-City      	Temperature	  Humidity	 Weather	        Wind Speed
-Bangalore	    29.37	        55	    scattered clouds	  5.81
-Delhi        	27.05	        47	      haze	            4.12
-Mumbai	      29.99	        74	      haze	            4.63
-Chennai	      33.81	        58	      haze	             3.09
-
+Sample Output
+City	        Temperature (°C)	Humidity (%)	Weather Condition	Wind Speed
+Bangalore	     31.49	             49          	scattered clouds	 5.36
+Delhi	         32.05	             40	             haze	             3.60
+Mumbai	         32.99	             58	             haze	             6.17
+Chennai	         36.88	             49	             scattered clouds	 2.57
 #How to Run the Project
 
 Step 1: Install Required Libraries
@@ -113,13 +130,23 @@ with your actual OpenWeather API key.
 
 Step 3: Run the Program
 python weather_data_collection.py
-Key Learnings
+
+Key Learnings:
 API Integration using Python
 Working with JSON data
-Data Collection techniques
+Real-time Data Collection
 Data Structuring using Pandas
-Exporting datasets into CSV format
+Exporting datasets into Excel format
+Working with APIs in VS Code
+Business Use Case
 
-#Conclusion
+This project can help:
+
+Weather monitoring systems
+Smart city applications
+Travel and tourism platforms
+Environmental data tracking
+
+Conclusion
 
 This project demonstrates practical implementation of real-time data collection using APIs and Python. It showcases skills in data extraction, processing, and structured dataset generation for analytical purposes.
